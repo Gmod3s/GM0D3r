@@ -1,3 +1,3 @@
-# GM0D3r
-# Welcome!
+# GM0D3r | Welcome!
+Commands | Prefixes | Features
 

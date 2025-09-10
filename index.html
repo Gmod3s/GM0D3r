@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test InitData</title>
+    <!-- Подключаем официальный скрипт Telegram -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 15px; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); }
+        textarea { width: 100%; height: 200px; margin-top: 10px; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <h3>Ваша строка initData:</h3>
+    <textarea id="initDataField" readonly></textarea>
+
+    <script>
+        // Ждем, когда объект Telegram Web App будет готов
+        window.Telegram.WebApp.ready();
+
+        // Получаем initData
+        const initData = window.Telegram.WebApp.initData;
+
+        // Вставляем ее в текстовое поле, чтобы можно было легко скопировать
+        document.getElementById('initDataField').value = initData;
+    </script>
+</body>
+</html>

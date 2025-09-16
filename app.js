@@ -2,23 +2,55 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const tg = window.Telegram.WebApp;
-    // --- ВАЖНО: Замени на публичный URL твоего API ---
-    const API_BASE_URL = "https://six-peas-hunt.loca.lt"; 
+    // --- ВАЖНО: Укажи свой URL ---
+    const API_BASE_URL = "https://six-peas-hunt.loca.lt";
 
     // --- Элементы DOM ---
     const loaderEl = document.getElementById('loader');
-    const mainContentEl = document.getElementById('main-content');
-    const userGreetingEl = document.getElementById('user-greeting');
-    const userStatusEl = document.getElementById('user-status');
-    const userTrafficEl = document.getElementById('user-traffic');
-    const userExpiresEl = document.getElementById('user-expires');
-    const serverListEl = document.getElementById('server-list');
-    const tariffListEl = document.getElementById('tariff-list');
-
+    const appContainerEl = document.getElementById('app-container');
+    const navBarEl = document.getElementById('nav-bar');
+    const pages = {
+        main: document.getElementById('page-main'),
+        tariffs: document.getElementById('page-tariffs'),
+        servers: document.getElementById('page-servers'),
+    };
+    
     tg.ready();
     tg.expand();
 
-    // --- Функция для выполнения запросов к API ---
+    // --- Навигация ---
+    navBarEl.addEventListener('click', (e) => {
+        if (e.target.classList.contains('nav-button')) {
+            const pageName = e.target.dataset.page;
+            Object.values(pages).forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+            
+            pages[pageName].classList.add('active');
+            e.target.classList.add('active');
+        }
+    });
+    
+    // --- API Клиент ---
+    async function apiFetch(endpoint, options = {}) { /* ... (код без изменений) ... */ }
+
+    // --- Функции рендеринга ---
+    function renderMainPage(userInfo, keysInfo) {
+        // ... (код для userGreeting, userStatus, etc.)
+        document.getElementById('user-tariff').innerText = userInfo.db_user.current_tariff_id || 'Не выбран';
+        
+        const keysEl = document.getElementById('user-keys');
+        keysEl.innerHTML = ''; // Очищаем
+        
+        if (keysInfo.subscription_url) {
+            const subLink = document.createElement('a');
+            subLink.href = keysInfo.subscription_url;
+            subLink.className = 'key-button';
+            subLink.innerText = '🔗 Добавить подписку';
+            subLink.onclick = (e) => { e.preventDefault(); tg.openLink(keysInfo.subscription_url); };
+            keysEl.appendChild(subLink);
+        }
+    }
+
     async function apiFetch(endpoint, options = {}) {
         try {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -64,53 +96,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderServers(servers) {
-        if (servers.length === 0) {
-            serverListEl.innerHTML = '<p>Нет данных о серверах.</p>';
-            return;
-        }
-        servers.forEach(server => {
-            const p = document.createElement('p');
-            const statusEmoji = server.status === 'online' ? '🟢' : '🔴';
-            p.innerHTML = `${statusEmoji} ${server.name} - <b>Загрузка: ${server.load_avg_1m !== null ? (server.load_avg_1m * 100).toFixed(0) + '%' : 'N/A'}</b>`;
-            serverListEl.appendChild(p);
-        });
-    }
-
-    function renderTariffs(tariffsData) {
-        if (tariffsData.tariffs.length === 0) {
-            tariffListEl.innerHTML = '<p>Нет доступных тарифов.</p>';
-            return;
-        }
-        tariffsData.tariffs.forEach(tariff => {
-            const btn = document.createElement('button');
-            btn.innerText = `${tariff.name} - от ${tariff.options[0].price} ${tariff.options[0].currency}`;
-            btn.onclick = () => {
-                // TODO: Добавить логику открытия окна выбора тарифа
-                tg.showAlert(`Вы выбрали тариф "${tariff.name}"`);
-            };
-            tariffListEl.appendChild(btn);
-        });
-    }
-
-    // --- Главная функция ---
     async function main() {
         try {
-            const [userInfo, serversStatus, tariffs] = await Promise.all([
+            const [userInfo, servers, tariffs, keys] = await Promise.all([
                 apiFetch('/api/user/info', { method: 'POST' }),
                 apiFetch('/api/servers/status'),
-                apiFetch('/api/tariffs/list')
+                apiFetch('/api/tariffs/list'),
+                apiFetch('/api/user/keys')
             ]);
             
-            renderUserInfo(userInfo.db_user, userInfo.marzban_user);
-            renderServers(serversStatus);
-            renderTariffs(tariffs);
+            renderMainPage(userInfo, keys);
+            renderServersPage(servers);
+            renderTariffsPage(tariffs);
 
-            mainContentEl.classList.remove('hidden');
+            appContainerEl.classList.remove('hidden');
+            navBarEl.classList.remove('hidden');
             loaderEl.classList.add('hidden');
         } catch (error) {
-            loaderEl.innerHTML = `<h2>🚫 Ошибка загрузки</h2><p style="color: var(--tg-theme-hint-color);">${error.message}</p>`;
-            tg.showAlert(`Произошла ошибка: ${error.message}`);
+            // ... (обработка ошибок)
         }
     }
     

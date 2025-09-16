@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tg = window.Telegram.WebApp;
     // --- ВАЖНО: Замени на публичный URL твоего API ---
-    const API_BASE_URL = "https://your-backend-domain.com"; 
+    const API_BASE_URL = "https://silver-bugs-smile.loca.lt:8090"; 
 
     // --- Элементы DOM ---
     const loaderEl = document.getElementById('loader');

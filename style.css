@@ -130,3 +130,21 @@ nav#nav-bar {
     font-weight: 600;
     cursor: pointer;
 }
+.key-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--tg-theme-bg-color);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+.key-item span { font-family: monospace; }
+.copy-btn {
+    background: none;
+    border: 1px solid var(--tg-theme-hint-color);
+    color: var(--tg-theme-hint-color);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+}

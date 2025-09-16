@@ -10,31 +10,41 @@
 <body>
     <div id="loader" class="loader">
         <div class="spinner"></div>
-        <p>Загрузка данных...</p>
     </div>
 
-    <div id="main-content" class="hidden">
-        <div id="user-card" class="card">
-            <h2 id="user-greeting">👋 Привет, ...</h2>
-            <div class="info-grid">
-                <span>Статус:</span><b id="user-status">-</b>
-                <span>Трафик:</span><b id="user-traffic">- / - GB</b>
-                <span>Подписка до:</span><b id="user-expires">-</b>
+    <main id="app-container" class="hidden">
+        <!-- Секция 1: Главная страница -->
+        <section id="page-main" class="page active">
+            <div class="card">
+                <h2 id="user-greeting">👋 Привет, ...</h2>
+                <div class="info-grid">
+                    <span>Статус:</span><b id="user-status">-</b>
+                    <span>Тариф:</span><b id="user-tariff">-</b>
+                    <span>Трафик:</span><b id="user-traffic">- / - GB</b>
+                    <span>Подписка до:</span><b id="user-expires">-</b>
+                </div>
             </div>
-        </div>
-
-        <div class="card">
-            <h3>🌐 Статус серверов</h3>
-            <div id="server-list"></div>
-        </div>
-
-        <div class="card">
-            <h3>🛒 Выбор тарифа</h3>
-            <div id="tariff-list" class="button-grid">
-                <!-- Кнопки тарифов будут вставлены сюда -->
+            <div class="card">
+                <h3>🔗 Ключи и подписка</h3>
+                <div id="user-keys">
+                    <p class="hint">Загрузка ключей...</p>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
+
+        <!-- Секция 2: Тарифы -->
+        <section id="page-tariffs" class="page"></section>
+
+        <!-- Секция 3: Статус серверов -->
+        <section id="page-servers" class="page"></section>
+    </main>
+
+    <!-- Нижняя панель навигации -->
+    <nav id="nav-bar" class="hidden">
+        <button data-page="main" class="nav-button active">Главная</button>
+        <button data-page="tariffs" class="nav-button">Тарифы</button>
+        <button data-page="servers" class="nav-button">Серверы</button>
+    </nav>
     
     <script src="./app.js"></script>
 </body>

@@ -2,8 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const tg = window.Telegram.WebApp;
-    // --- ВАЖНО: Укажи свой URL ---
-    const API_BASE_URL = "https://six-peas-hunt.loca.lt"; // Пример для localtunnel
+    // --- ВАЖНО: Укажи свой URL API ---
+    const API_BASE_URL = "https://your-backend-domain.loca.lt";
 
     // --- Элементы DOM ---
     const loaderEl = document.getElementById('loader');
@@ -23,9 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const serverListEl = document.getElementById('page-servers');
     const tariffListEl = document.getElementById('page-tariffs');
 
+    // --- Инициализация приложения ---
     tg.ready();
     tg.expand();
-    tg.setHeaderColor('#1a73e8'); // Пример установки цвета хедера
+    tg.setHeaderColor('#1a73e8'); // Синий цвет хедера
 
     // --- Навигация ---
     navBarEl.addEventListener('click', (e) => {
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                 ...options,
                 headers: { 
+                    'Content-Type': 'application/json',
                     ...options.headers, 
                     'Authorization': `Bearer ${tg.initData}`,
                     'Bypass-Tunnel-Reminder': 'true'
@@ -60,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return result.data;
         } catch (error) {
-            console.error("Fetch failed:", error);
+            console.error(`Fetch failed for endpoint ${endpoint}:`, error);
             throw error;
         }
     }
@@ -69,10 +71,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderMainPage(userInfo, keysInfo) {
         const { db_user, marzban_user } = userInfo;
         userGreetingEl.innerText = `👋 Привет, ${db_user.full_name}!`;
-        userStatusEl.innerText = marzban_user.status === 'active' ? 'Активна' : 'Неактивна';
-        userStatusEl.style.color = marzban_user.status === 'active' ? '#4caf50' : '#f44336';
         
-        userTariffEl.innerText = db_user.current_tariff_id || 'Не выбран';
+        if (marzban_user.status === 'active') {
+            userStatusEl.innerText = 'Активна';
+            userStatusEl.style.color = '#4caf50'; // Зеленый
+        } else {
+            userStatusEl.innerText = 'Неактивна';
+            userStatusEl.style.color = '#f44336'; // Красный
+        }
+
+        const tariffName = db_user.current_tariff_id;
+        if (tariffName) {
+            if (tariffName === 'privileged_plan') {
+                userTariffEl.innerText = 'Льготный';
+            } else {
+                userTariffEl.innerText = tariffName.split('_')[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            }
+        } else {
+            userTariffEl.innerText = 'Не выбран';
+        }
         
         const usedGb = (marzban_user.used_traffic / (1024**3)).toFixed(2);
         const limitGb = marzban_user.data_limit > 0 ? (marzban_user.data_limit / (1024**3)).toFixed(0) : '∞';
@@ -85,13 +102,45 @@ document.addEventListener('DOMContentLoaded', () => {
             userExpiresEl.innerText = 'Бессрочно';
         }
 
-        keysEl.innerHTML = ''; // Очищаем
+        const subLinkBtn = document.getElementById('sub-link-btn');
         if (keysInfo.subscription_url) {
-            const subLink = document.createElement('a');
-            subLink.className = 'key-button';
-            subLink.innerText = '🔗 Добавить подписку';
-            subLink.onclick = () => tg.openLink(keysInfo.subscription_url);
-            keysEl.appendChild(subLink);
+            subLinkBtn.onclick = () => tg.openLink(keysInfo.subscription_url);
+        } else {
+            subLinkBtn.style.display = 'none';
+        }
+
+        const keyListEl = document.getElementById('key-list');
+        keyListEl.innerHTML = '';
+        if (keysInfo.keys && keysInfo.keys.length > 0) {
+            keysInfo.keys.forEach((key, index) => {
+                const keyItem = document.createElement('div');
+                keyItem.className = 'key-item';
+                const name = `Ключ ${index + 1}`;
+
+                keyItem.innerHTML = `<span>${name}</span><button class="copy-btn">Действия</button>`;
+                
+                keyItem.querySelector('.copy-btn').onclick = () => {
+                    tg.showPopup({
+                        title: 'Действия с ключом',
+                        message: 'Выберите, что вы хотите сделать.',
+                        buttons: [
+                            { id: 'copy', type: 'default', text: 'Копировать ключ' },
+                            { id: 'open_v2ray', type: 'default', text: 'Открыть в V2Ray' },
+                            { id: 'cancel', type: 'cancel' },
+                        ]
+                    }, (buttonId) => {
+                        if (buttonId === 'copy') {
+                            tg.HapticFeedback.impactOccurred('light');
+                            navigator.clipboard.writeText(key).then(() => {
+                                tg.showAlert('Ключ скопирован в буфер обмена!');
+                            });
+                        } else if (buttonId === 'open_v2ray') {
+                            tg.openLink(`vless://${key.split('//')[1]}`);
+                        }
+                    });
+                };
+                keyListEl.appendChild(keyItem);
+            });
         }
     }
 
@@ -117,9 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         tariffsData.tariffs.forEach(tariff => {
             const btn = document.createElement('button');
-            btn.className = 'tariff-button';
+            btn.className = 'key-button'; // Используем тот же стиль, что и у кнопок ключей
             btn.innerText = `${tariff.name}`;
-            btn.onclick = () => tg.showAlert(`Вы выбрали тариф "${tariff.name}"`);
+            btn.onclick = () => {
+                // TODO: Реализовать модальное окно выбора опции (RUB/STARS)
+                tg.showAlert(`Выбран тариф: ${tariff.name}`);
+            };
             tariffListEl.appendChild(btn);
         });
     }

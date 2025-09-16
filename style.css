@@ -68,3 +68,65 @@ body {
     font-weight: 600;
     cursor: pointer;
 }
+
+main {
+    padding-bottom: 80px; /* Оставляем место для навбара */
+}
+
+.page {
+    display: none;
+}
+.page.active {
+    display: block;
+}
+
+nav#nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+    padding: 10px 0;
+    border-top: 1px solid var(--tg-theme-hint-color, #dddddd);
+}
+
+.nav-button {
+    flex-grow: 1;
+    text-align: center;
+    background: none;
+    border: none;
+    color: var(--tg-theme-hint-color, #999999);
+    padding: 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.nav-button.active {
+    color: var(--tg-theme-button-color, #3390ec);
+    font-weight: 700;
+}
+
+.hint {
+    color: var(--tg-theme-hint-color);
+    text-align: center;
+    font-size: 14px;
+}
+
+.key-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--tg-theme-button-color, #3390ec);
+    color: var(--tg-theme-button-color, #3390ec);
+    background-color: transparent;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}

@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                 ...options,
-                headers: { ...options.headers, 'Authorization': `Bearer ${tg.initData}` }
+                headers: { ...options.headers, 'Authorization': `Bearer ${tg.initData}`, 'Bypass-Tunnel-Reminder': 'true'}
             });
             if (!response.ok) {
                 const errorText = await response.text();

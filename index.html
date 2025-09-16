@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Личный кабинет</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div id="loader" class="loader">
+        <div class="spinner"></div>
+        <p>Загрузка данных...</p>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <div id="user-card" class="card">
+            <h2 id="user-greeting">👋 Привет, ...</h2>
+            <div class="info-grid">
+                <span>Статус:</span><b id="user-status">-</b>
+                <span>Трафик:</span><b id="user-traffic">- / - GB</b>
+                <span>Подписка до:</span><b id="user-expires">-</b>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🌐 Статус серверов</h3>
+            <div id="server-list"></div>
+        </div>
+
+        <div class="card">
+            <h3>🛒 Выбор тарифа</h3>
+            <div id="tariff-list" class="button-grid">
+                <!-- Кнопки тарифов будут вставлены сюда -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="./app.js"></script>
+</body>
+</html>

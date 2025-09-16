@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tg = window.Telegram.WebApp;
     // --- ВАЖНО: Укажи свой URL API ---
-    const API_BASE_URL = "https://your-backend-domain.loca.lt";
+    const API_BASE_URL = "https://six-peas-hunt.loca.lt";
 
     // --- Элементы DOM ---
     const loaderEl = document.getElementById('loader');

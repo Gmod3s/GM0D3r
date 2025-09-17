@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tg = window.Telegram.WebApp;
     // --- ВАЖНО: Укажи свой URL API ---
-    const API_BASE_URL = "https://quiet-masks-glow.loca.lt";
+    const API_BASE_URL = "https://lazy-cobras-admire.loca.lt";
 
     // --- Элементы DOM ---
     const loaderEl = document.getElementById('loader');
